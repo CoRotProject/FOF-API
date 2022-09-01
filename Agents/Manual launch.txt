@@ -1,0 +1,4 @@
+cd \CESI_DEV\FOF-API\FOF_API\Agents
+C:\Anaconda3\envs\OPCUA\python.exe 'TaskHumans.py' 'http://robigdata.rorecherche:5000/' 'Factory CERI' 'R:/home/lineact/humains-web/BasedonneesHuman.xml'
+C:\Anaconda3\envs\OPCUA\python.exe 'Tak_CERI_CNC.py' 'http://robigdata.rorecherche:5000/' 'Factory CERI' CERI_CNC
+C:\Anaconda3\envs\OPCUA\python.exe 'Task_CERI_META.py' 'http://robigdata.rorecherche:5000/' 'Factory CERI' Task_META

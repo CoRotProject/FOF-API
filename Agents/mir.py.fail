@@ -1,0 +1,78 @@
+#!/usr/bin/env python2 
+# coding: utf8
+# Copyright 2020 Fabrice DUVAL
+
+from __future__ import unicode_literals
+from __future__ import print_function
+import requests
+import json
+import time
+
+import actionlib
+import rospy
+from mirSupervisor.srv import *
+
+ROBOT_STATE = {"ROBOT_STATE_NONE" : 0, "ROBOT_STATE_STARTING" : 1, "ROBOT_STATE_SHUTTINGDOWN" : 2, "ROBOT_STATE_READY" : 3, "ROBOT_STATE_PAUSE" : 4, "ROBOT_STATE_EXECUTING" : 5, "ROBOT_STATE_ABORTED" : 6, "ROBOT_STATE_COMPLETED" : 7, "ROBOT_STATE_DOCKED" : 8, "ROBOT_STATE_DOCKING" : 9, "ROBOT_STATE_EMERGENCYSTOP" : 10, "ROBOT_STATE_MANUALCONTROL" : 11, "ROBOT_STATE_ERROR" : 12}
+
+def setready():
+	rospy.wait_for_service('/mirsupervisor/setRobotState')
+	try:
+		Service_status = rospy.ServiceProxy('/mirsupervisor/setRobotState',SetState)
+		Reponse = Service_status(3)
+		return Reponse
+	except rospy.ServiceException, e:
+		print("Service call failed: " + e)
+		return False
+
+try:
+	from lxml import etree as ET
+except:
+	import xml.etree.ElementTree as ET
+
+# creation de http://mir_arm/ajax/fabrice.php?action=go_to_position&x=1.0&y=2.0&theta=90
+
+
+def go(point):
+	Query = "http://127.0.0.1/ajax/fabrice.php?action=go_to_position&x=" + point[0] +"&y=" +  point[1] + "&theta=" + point[2]
+	r=requests.get(Query)
+	if r.status_code != 200:
+		return -1
+	else:
+		return json.loads(r.text)['id']
+	
+
+def getmission(id):
+	Query = "http://127.0.0.1/ajax/mission_status.php?mission="+str(id)
+	reponse = json.loads(requests.get(Query).text)
+	retour = {}
+	retour['status'] = reponse['end_state']
+	retour['message'] = reponse['message']
+	retour['start_time'] = str(time.mktime(time.strptime(reponse['start_time'],'%Y-%m-%d %H:%M:%S')))
+	retour['end_time'] = str(time.mktime(time.strptime(reponse['end_time'],'%Y-%m-%d %H:%M:%S')))
+	retour['current_time'] =  str(time.time())
+	return retour
+	
+	
+def getstatus():
+	Query = "http://127.0.0.1/ajax/last_status.php"
+	reponse = json.loads(requests.get(Query).text)
+
+	retour = {}
+	retour['x'] = reponse['pos_x']
+	retour['y'] = reponse['pos_y']
+	retour['theta'] = reponse['theta']
+	retour['map'] = reponse['map_id'] # attention, mauvaise solution
+	retour['statusnumber'] = reponse['state']
+	retour['status_time'] =  str(time.mktime(time.strptime(reponse['time'],'%Y-%m-%d %H:%M:%S')))
+	retour['current_time'] =  str(time.time())
+	retour['battery'] = reponse['battery']
+
+	Query = "http://127.0.0.1/ajax/fabrice.php?action=statusliste"
+	reponse = json.loads(requests.get(Query).text)
+	retour['status'] = "Unknown"
+	for statut in reponse:
+		if statut['state_id']==retour['statusnumber']:
+			retour['status'] = statut['state']
+			break
+	
+	return retour

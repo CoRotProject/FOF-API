@@ -1,0 +1,3 @@
+Based on the version "DM 2019 02 05 VHD"
+of the file 
+https://cesifr.sharepoint.com/sites/CesiRecherche/projets/fof-rouen/Documents%20partages/Documentations/Specifications/UdF%20data%20model/Modele%20de%20données/UdF%20-%20Modèle%20v1.vsdx?web=1

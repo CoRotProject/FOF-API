@@ -1,0 +1,130 @@
+def ur5_charge_capot_parametrique_vers_imprimante():
+  set_standard_analog_input_domain(0, 1)
+  set_standard_analog_input_domain(1, 1)
+  set_tool_analog_input_domain(0, 1)
+  set_tool_analog_input_domain(1, 1)
+  set_analog_outputdomain(0, 0)
+  set_analog_outputdomain(1, 0)
+  set_tool_voltage(0)
+  set_standard_digital_input_action(0, "default")
+  set_standard_digital_input_action(1, "default")
+  set_standard_digital_input_action(2, "default")
+  set_standard_digital_input_action(3, "default")
+  set_standard_digital_input_action(4, "default")
+  set_standard_digital_input_action(5, "default")
+  set_standard_digital_input_action(6, "default")
+  set_standard_digital_input_action(7, "default")
+  set_tool_digital_input_action(0, "default")
+  set_tool_digital_input_action(1, "default")
+  set_tcp(p[0.0,0.0,0.1918,0.0,0.0,0.0])
+  set_payload(0.0)
+  set_gravity([0.0, 0.0, 9.82])
+  global Selected_Boite=7
+  set_tool_voltage(24)
+  set_tcp(p[0,-0,0.19174,0,0,0])
+  global lost_grip=False
+  global grip_detected=False
+  thread lost_grip_thread():
+    while True:
+      if True ==get_digital_in(9):
+        sync()
+        if True == grip_detected:
+          if False == get_digital_in(8):
+            grip_detected=False
+            lost_grip=True
+          end
+        end
+        global measure_width = (floor(((get_analog_in(2)-0.026)*110/2.976)*10))/10 -11.6
+      end
+      sync()
+    end
+  end
+  run lost_grip_thread()
+  set_payload(0.7415,[0,0,0.06911])
+  
+  def RGX(val):
+    set_tcp(p[0,-0,0.19174,0,0,0])
+    timeout = 0
+    while get_digital_in(9) == False:
+      if timeout > 400:
+        break
+      end
+      timeout = timeout+1
+      sync()
+    end
+    def bit(input):
+      msb=65536
+      local i=0
+      local output=0
+      while i<17:
+        set_digital_out(8,True)
+        if input>=msb:
+          input=input-msb
+          set_digital_out(9,False)
+        else:
+          set_digital_out(9,True)
+        end
+        if get_digital_in(8):
+          out=1
+        end
+        sync()
+        set_digital_out(8,False)
+        sync()
+        input=input*2
+        output=output*2
+        i=i+1
+      end
+      return output
+    end
+    bit(floor(8924+4*val))
+    timeout = 0
+    while get_digital_in(9) == True:
+      timeout = timeout+1
+      sync()
+      if timeout > 20:
+        break
+      end
+    end
+    timeout = 0
+    while get_digital_in(9) == False:
+      timeout = timeout+1
+      sync()
+      if timeout > 400:
+        break
+      end
+    end
+    if get_digital_in(8) == False:
+      set_payload(0.7415,[0,0,0.06911])
+    else:
+      set_payload(1.2415,[0,-0,0.1185])
+    end
+    global lost_grip=False
+    global grip_detected=False
+    sync()
+    sync()
+    sync()
+    if True == get_digital_in(8):
+      grip_detected=True
+    end
+    qscale = (get_analog_in(2)-0.026)/2.976
+    qangle = qscale*1.57079633-0.087266462
+    qwidth = 5+110*sin(qangle)
+    global measure_width = (floor(qwidth*10))/10-11.6
+  end
+  
+  while (True):
+    movej([0.0, -1.5707963267948966, 3.733516820155224E-16, -1.5707963267948966, 0.0, 1.6041387963916382E-19], a=1.3962634015954636, v=1.0471975511965976)
+    RGX(18)
+    movej(pose_add(p[-.465, -.3611, .1196, -2.22, -2.22, -.0351],p[0.05 * Selected_Boite,0.0,0.0,0.0,0.0,0.0]), a=1.3962634015954636, v=1.0471975511965976)
+    movel(pose_add(get_forward_kin(), pose_sub(p[-.164807620499, -.361179959457, .050012561868, -2.215935229974, -2.222073464489, -.035276376785], p[-.164833240282, -.361170338300, .120020431709, -2.215998312629, -2.221948399319, -.035258879147])), a=1.2, v=0.25)
+    RGX(5)
+    movel(pose_add(get_forward_kin(), pose_sub(p[-.164883102110, -.361194194588, .119446149068, -2.216093566392, -2.221909368603, -.035093694584], p[-.164821297938, -.361179871195, .050015095521, -2.215987113652, -2.222044131658, -.035222030451])), a=1.2, v=0.25)
+    movej([0.3993620054600968, -1.1791244086512318, 1.8085897362507168, -3.77608933135107, -1.962783303167548, 3.1290696018938324], a=1.3962634015954636, v=1.0471975511965976)
+    movej([0.33922496566073795, -0.9848698666296034, 1.5174142102932722, -3.6787946515623995, -1.9038977406834654, 3.128112598674937], a=1.3962634015954636, v=1.0471975511965976)
+    movej([0.3391166954390652, -0.9366413876869819, 1.548931564649473, -3.758329506244227, -1.9028290625154627, 3.1287307658211123], a=1.3962634015954636, v=1.0471975511965976)
+    RGX(12)
+    movel([0.37893998515282357, -1.0375412703236488, 1.7252035434067352, -3.8338938070843707, -1.9417633661573248, 3.12949161227268], a=1.2, v=0.25)
+    movej([0.0, -1.5707963267948966, 3.733516820155224E-16, -1.5707963267948966, 0.0, 1.6041387963916382E-19], a=1.3962634015954636, v=1.0471975511965976)
+    halt
+  end
+end

@@ -1,0 +1,10 @@
+#!/bin/bash
+echo "start"
+
+python /home/ubuntu/FOF-API/FOF_API/Agents/UWB_agent/uwb_ros.py &
+python /home/ubuntu/FOF-API/FOF_API/Agents/UWB_agent/ros_data.py &
+python /home/ubuntu/FOF-API/FOF_API/Agents/UWB_agent/battery_low.py &
+
+echo "started"
+
+wait

@@ -1,0 +1,129 @@
+def grab():
+    set_standard_analog_input_domain(0, 1)
+    set_standard_analog_input_domain(1, 1)
+    set_tool_analog_input_domain(0, 1)
+    set_tool_analog_input_domain(1, 1)
+    set_analog_outputdomain(0, 0)
+    set_analog_outputdomain(1, 0)
+    set_tool_voltage(0)
+    set_standard_digital_input_action(0, "default")
+    set_standard_digital_input_action(1, "default")
+    set_standard_digital_input_action(2, "default")
+    set_standard_digital_input_action(3, "default")
+    set_standard_digital_input_action(4, "default")
+    set_standard_digital_input_action(5, "default")
+    set_standard_digital_input_action(6, "default")
+    set_standard_digital_input_action(7, "default")
+    set_tool_digital_input_action(0, "default")
+    set_tool_digital_input_action(1, "default")
+    set_tcp(p[0.0,0.0,0.1918,0.0,0.0,0.0])
+    set_payload(0.0)
+    set_gravity([0.0, 0.0, 9.82])
+    
+    global delta_saisie=0.035
+    global gripopen=10
+    global gripclose=0
+    
+    set_tool_voltage(24)
+    set_tcp(p[0,-0,0.19174,0,0,0])
+    global lost_grip=False
+    global grip_detected=False
+    thread lost_grip_thread():
+        while True:
+            if True ==get_digital_in(9):
+                sync()
+                if True == grip_detected:
+                    if False == get_digital_in(8):
+                        grip_detected=False
+                        lost_grip=True
+                    end
+                end
+                global measure_width = (floor(((get_analog_in(2)-0.026)*110/2.976)*10))/10 -11.6
+            end
+            sync()
+        end
+    end
+    run lost_grip_thread()
+
+    set_payload(0.7415,[0,0,0.06911])
+
+    def RGX(val):
+        set_tcp(p[0,-0,0.19174,0,0,0])
+        timeout = 0
+        while get_digital_in(9) == False:
+            if timeout > 400:
+                break
+            end
+            timeout = timeout+1
+            sync()
+        end
+        def bit(input):
+            msb=65536
+            local i=0
+            local output=0
+            while i<17:
+                set_digital_out(8,True)
+                if input>=msb:
+                    input=input-msb
+                    set_digital_out(9,False)
+                else:
+                    set_digital_out(9,True)
+                end
+                if get_digital_in(8):
+                    out=1
+                end
+                sync()
+                set_digital_out(8,False)
+                sync()
+                input=input*2
+                output=output*2
+                i=i+1
+            end
+            return output
+        end
+        bit(floor(8924+4*val))
+        timeout = 0
+        while get_digital_in(9) == True:
+            timeout = timeout+1
+            sync()
+            if timeout > 20:
+                break
+            end
+        end
+        timeout = 0
+        while get_digital_in(9) == False:
+            timeout = timeout+1
+            sync()
+            if timeout > 400:
+                break
+            end
+        end
+        if get_digital_in(8) == False:
+            set_payload(0.7415,[0,0,0.06911])
+        else:
+            set_payload(1.2415,[0,-0,0.1185])
+        end
+        global lost_grip=False
+        global grip_detected=False
+        sync()
+        sync()
+        sync()
+        if True == get_digital_in(8):
+            grip_detected=True
+        end
+        qscale = (get_analog_in(2)-0.026)/2.976
+        qangle = qscale*1.57079633-0.087266462
+        qwidth = 5+110*sin(qangle)
+        global measure_width = (floor(qwidth*10))/10-11.6
+    end
+
+    
+    while (True):
+        RGX(gripopen)
+        movej(pose_trans(p[0.383, -0.330, 0.066, 0.0, 3.14, 0.0],p[0.0,0.0,-delta_saisie,0.0,0.0,0.0]), a=1.3962634015954636, v=1.0471975511965976)
+        movej(p[0.383, -0.330, 0.066, 0.0, 3.14, 0.0], a=1.3962634015954636, v=1.0471975511965976)
+        RGX(gripclose)
+        halt
+    end
+end
+

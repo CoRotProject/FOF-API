@@ -1,0 +1,154 @@
+def ur5_from_imprimante():
+  set_standard_analog_input_domain(0, 1)
+  set_standard_analog_input_domain(1, 1)
+  set_tool_analog_input_domain(0, 1)
+  set_tool_analog_input_domain(1, 1)
+  set_analog_outputdomain(0, 0)
+  set_analog_outputdomain(1, 0)
+  set_tool_voltage(0)
+  set_standard_digital_input_action(0, "default")
+  set_standard_digital_input_action(1, "default")
+  set_standard_digital_input_action(2, "default")
+  set_standard_digital_input_action(3, "default")
+  set_standard_digital_input_action(4, "default")
+  set_standard_digital_input_action(5, "default")
+  set_standard_digital_input_action(6, "default")
+  set_standard_digital_input_action(7, "default")
+  set_tool_digital_input_action(0, "default")
+  set_tool_digital_input_action(1, "default")
+  set_tcp(p[0.0,0.0,0.1918,0.0,0.0,0.0])
+  set_payload(0.0)
+  set_gravity([0.0, 0.0, 9.82])
+  global Selected_Boite=1
+  set_tool_voltage(24)
+  set_tcp(p[0,-0,0.19174,0,0,0])
+  global lost_grip=False
+  global grip_detected=False
+  thread lost_grip_thread():
+    while True:
+      if True ==get_digital_in(9):
+        sync()
+        if True == grip_detected:
+          if False == get_digital_in(8):
+            grip_detected=False
+            lost_grip=True
+          end
+        end
+        global measure_width = (floor(((get_analog_in(2)-0.026)*110/2.976)*10))/10 -11.6
+      end
+      sync()
+    end
+  end
+  run lost_grip_thread()
+  set_payload(0.7415,[0,0,0.06911])
+  def movez_machine_c():
+    global thread_flag_31=0
+    thread Thread_if_31():
+      movel(pose_add(get_forward_kin(), p[0.0, 0.0, -0.0105*(12-Selected_Boite), 0.0, 0.0, 0.0]), a=1.2, v=0.25)
+      thread_flag_31 = 1
+    end
+    global thread_handler_31=run Thread_if_31()
+    while (thread_flag_31 == 0):
+      if not(Selected_Boite <= 11):
+        kill thread_handler_31
+        thread_flag_31 = 2
+      else:
+        sync()
+      end
+    end
+  end
+  def RGX(val):
+    set_tcp(p[0,-0,0.19174,0,0,0])
+    timeout = 0
+    while get_digital_in(9) == False:
+      if timeout > 400:
+        break
+      end
+      timeout = timeout+1
+      sync()
+    end
+    def bit(input):
+      msb=65536
+      local i=0
+      local output=0
+      while i<17:
+        set_digital_out(8,True)
+        if input>=msb:
+          input=input-msb
+          set_digital_out(9,False)
+        else:
+          set_digital_out(9,True)
+        end
+        if get_digital_in(8):
+          out=1
+        end
+        sync()
+        set_digital_out(8,False)
+        sync()
+        input=input*2
+        output=output*2
+        i=i+1
+      end
+      return output
+    end
+    bit(floor(8924+4*val))
+    timeout = 0
+    while get_digital_in(9) == True:
+      timeout = timeout+1
+      sync()
+      if timeout > 20:
+        break
+      end
+    end
+    timeout = 0
+    while get_digital_in(9) == False:
+      timeout = timeout+1
+      sync()
+      if timeout > 400:
+        break
+      end
+    end
+    if get_digital_in(8) == False:
+      set_payload(0.7415,[0,0,0.06911])
+    else:
+      set_payload(1.2415,[0,-0,0.1185])
+    end
+    global lost_grip=False
+    global grip_detected=False
+    sync()
+    sync()
+    sync()
+    if True == get_digital_in(8):
+      grip_detected=True
+    end
+    qscale = (get_analog_in(2)-0.026)/2.976
+    qangle = qscale*1.57079633-0.087266462
+    qwidth = 5+110*sin(qangle)
+    global measure_width = (floor(qwidth*10))/10-11.6
+  end
+    
+  while (True):
+    movej([0.0, -1.5707963267948966, 3.733516820155224E-16, -1.5707963267948966, 0.0, 1.6041387963916382E-19], a=1.3962634015954636, v=1.0471975511965976)
+    RGX(18)
+    movej([0.37893998515282357, -1.0375412703236488, 1.7252035434067352, -3.8338938070843707, -1.9417633661573248, 3.12949161227268], a=1.3962634015954636, v=1.0471975511965976)
+    movel([0.3391166954390652, -0.9366413876869819, 1.548931564649473, -3.758329506244227, -1.9028290625154627, 3.1287307658211123], a=1.2, v=0.25)
+    halt
+    RGX(5)
+    movej([0.33922496566073795, -0.9848698666296034, 1.5174142102932722, -3.6787946515623995, -1.9038977406834654, 3.128112598674937], a=1.3962634015954636, v=1.0471975511965976)
+    movej([0.3993620054600968, -1.1791244086512318, 1.8085897362507168, -3.77608933135107, -1.962783303167548, 3.1290696018938324], a=1.3962634015954636, v=1.0471975511965976)
+    movej([1.6016621733690077, -1.6090503326989207, -1.0246875037308492, -0.5070892819267687, 1.4557350425463547, 6.218387378370313], a=1.3962634015954636, v=1.0471975511965976)
+    RGX(9)
+    movel(pose_add(get_forward_kin(), pose_sub(p[.120752574466, .714492341337, .798253815688, -1.572568287747, .018861944187, -.099421432147], p[.120784379306, .636968152234, .798279318141, -1.572504119417, .018974729285, -.099423910966])), a=1.2, v=0.25)
+    movel(pose_add(get_forward_kin(), pose_sub(p[.147556428738, .714394083857, .798358098162, -1.572388293091, .018940961794, -.099393099594], p[.120748170489, .714464343530, .798279685672, -1.572520074555, .018894089994, -.099391082367])), a=1.2, v=0.25)
+    movel(pose_add(get_forward_kin(), pose_sub(p[.146343543314, .712677132357, .798367174268, -1.572332533576, .018978917263, -.099264233572], p[.147508951889, .714462645120, .798281917292, -1.572493490483, .018938775101, -.099260776072])), a=1.2, v=0.25)
+    movel(pose_add(get_forward_kin(), pose_sub(p[.146338905745, .714703278457, .798302784294, -1.159314002920, .037008225501, -.088937251459], p[.146269737265, .712749848104, .798314147139, -1.572408010054, .018798114755, -.099311161299])), a=1.2, v=0.25)
+    movel(pose_add(get_forward_kin(), pose_sub(p[.146365486543, .714725471368, .674696005544, -1.159474149262, .037049211376, -.088929081076], p[.146333209565, .714689327390, .798315024363, -1.159290922520, .037012339782, -.088933470605])), a=1.2, v=0.25)
+    movel(pose_add(get_forward_kin(), pose_sub(p[.146339241365, .714629483718, .674861670552, -1.873401852265, .003944045720, -.105859666046], p[.146298453518, .714710584064, .674764903443, -1.159333102631, .037031858997, -.088884602423])), a=1.2, v=0.25)
+    movel(pose_add(get_forward_kin(), pose_sub(p[.146346240941, .714670594204, .663421281972, -1.873556353342, .004089770599, -.105726448784], p[.146313408992, .714629006170, .674886671195, -1.873318095897, .003902867776, -.105843929460])), a=1.2, v=0.25)
+    movez_machine_c()
+    RGX(18)
+    movel(pose_add(get_forward_kin(), pose_sub(p[.142158956529, .662246932597, .679789044850, -1.873525930827, .003925765484, -.105748432243], p[.146312569154, .714654829343, .663509067468, -1.873377130230, .003931907257, -.105730841972])), a=1.2, v=0.25)
+    movej([0.0, -1.5707963267948966, 3.733516820155224E-16, -1.5707963267948966, 0.0, 1.6041387963916382E-19], a=1.3962634015954636, v=2.0943951023931953)
+    halt
+  end
+end

@@ -1,0 +1,10 @@
+ Program
+   Robot Program
+     RG2(10)
+     MoveJ
+       Waypoint_1
+     MoveL
+       Waypoint_2
+       RG2(0)
+       Waypoint_3
+     Halt

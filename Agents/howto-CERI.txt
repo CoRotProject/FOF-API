@@ -1,0 +1,12 @@
+Raspi ceri
+
+factory = "Factory CERI"
+
+
+agent => python3 CNCAgent.py IpAPI
+python3 CNCAgent.py http://robigdata.rorecherche:5000/
+python3 CNCAgent.py http://192.168.1.100:5000/
+
+Attention change simulate to False to run with real machine
+python3 CNCAgent.py http://192.168.1.100:5000/ real
+
