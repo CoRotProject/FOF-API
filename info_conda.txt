@@ -1,0 +1,34 @@
+https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
+
+Saving environment variables
+
+Conda environments can include saved environment variables.
+
+Suppose you want an environment "analytics" to store both a secret key needed to log in to a server and a path to a configuration file. The sections below explain how to write a script named env_vars to do this on Windows and macOS or Linux.
+
+This type of script file can be part of a conda package, in which case these environment variables become active when an environment containing that package is activated.
+
+You can name these scripts anything you like. However, multiple packages may create script files, so be sure to use descriptive names that are not used by other packages. One popular option is to give the script a name in the form packagename-scriptname.sh, or on Windows, packagename-scriptname.bat.
+Windows
+
+    Locate the directory for the conda environment in your Anaconda Prompt by running in the command shell %CONDA_PREFIX%.
+
+    Enter that directory and create these subdirectories and files:
+
+    cd %CONDA_PREFIX%
+    mkdir .\etc\conda\activate.d
+    mkdir .\etc\conda\deactivate.d
+    type NUL > .\etc\conda\activate.d\env_vars.bat
+    type NUL > .\etc\conda\deactivate.d\env_vars.bat
+
+    Edit .\etc\conda\activate.d\env_vars.bat as follows:
+
+    set MY_KEY='secret-key-value'
+    set MY_FILE=C:\path\to\my\file
+
+    Edit .\etc\conda\deactivate.d\env_vars.bat as follows:
+
+    set MY_KEY=
+    set MY_FILE=
+
+When you run conda activate analytics, the environment variables MY_KEY and MY_FILE are set to the values you wrote into the file. When you run conda deactivate, those variables are erased.

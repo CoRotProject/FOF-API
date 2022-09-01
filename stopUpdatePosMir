@@ -1,0 +1,2 @@
+pkill -c -f "python2 autostart2.py UpdatePosMir.py"
+pkill -c -f "python2 UpdatePosMir.py"

@@ -1,0 +1,27 @@
+5f8e9b0c6693fa43fc19a53d
+ObjectId("5f8e9b0c6693fa43fc19a53d")
+robot_agent = AgentOperationTurtle(1, "Turtel Waffle 1", factoryidentity, robot, nom, Robot)
+
+{factoryInfo:ObjectId("5f8e9b0c6693fa43fc19a53d")}
+
+
+kill -9 `ps -aux | grep 2\ serveur.py | grep -v /bin/sh |grep -v grep | cut -c9-14`
+
+{factoryInfo:{$ne:ObjectId('5fa52da09c0b977f72488d8c')},factoryInfo:{$ne:ObjectId('6008031f1f1a902031a81813')},factoryInfo:{$ne:ObjectId('5fa3d0a09c0b977f72488d4b')},factoryInfo:{$ne:ObjectId('5fa515eb9c0b977f72488d7f')},factoryInfo:{$ne:ObjectId('6007fbbf54fe221831e89e8a')}}
+
+{factoryInfo:ObjectId('6008031f1f1a902031a81813')}
+
+5fa3d0a09c0b977f72488d4b
+5fa515eb9c0b977f72488d7f
+6007fbbf54fe221831e89e8a
+
+db.job.deleteMany({factoryInfo:{$ne:ObjectId('5fa52da09c0b977f72488d8c')},factoryInfo:{$ne:ObjectId('6008031f1f1a902031a81813')},factoryInfo:{$ne:ObjectId('5fa3d0a09c0b977f72488d4b')},factoryInfo:{$ne:ObjectId('5fa515eb9c0b977f72488d7f')},factoryInfo:{$ne:ObjectId('6007fbbf54fe221831e89e8a')}})
+db.jobdescription.deleteMany({factoryInfo:{$ne:ObjectId('5fa52da09c0b977f72488d8c')},factoryInfo:{$ne:ObjectId('6008031f1f1a902031a81813')},factoryInfo:{$ne:ObjectId('5fa3d0a09c0b977f72488d4b')},factoryInfo:{$ne:ObjectId('5fa515eb9c0b977f72488d7f')},factoryInfo:{$ne:ObjectId('6007fbbf54fe221831e89e8a')}})
+db.operation.deleteMany({factoryInfo:{$ne:ObjectId('5fa52da09c0b977f72488d8c')},factoryInfo:{$ne:ObjectId('6008031f1f1a902031a81813')},factoryInfo:{$ne:ObjectId('5fa3d0a09c0b977f72488d4b')},factoryInfo:{$ne:ObjectId('5fa515eb9c0b977f72488d7f')},factoryInfo:{$ne:ObjectId('6007fbbf54fe221831e89e8a')}})
+db.order.deleteMany({factoryInfo:{$ne:ObjectId('5fa52da09c0b977f72488d8c')},factoryInfo:{$ne:ObjectId('6008031f1f1a902031a81813')},factoryInfo:{$ne:ObjectId('5fa3d0a09c0b977f72488d4b')},factoryInfo:{$ne:ObjectId('5fa515eb9c0b977f72488d7f')},factoryInfo:{$ne:ObjectId('6007fbbf54fe221831e89e8a')}})
+db.product.deleteMany({factoryInfo:{$ne:ObjectId('5fa52da09c0b977f72488d8c')},factoryInfo:{$ne:ObjectId('6008031f1f1a902031a81813')},factoryInfo:{$ne:ObjectId('5fa3d0a09c0b977f72488d4b')},factoryInfo:{$ne:ObjectId('5fa515eb9c0b977f72488d7f')},factoryInfo:{$ne:ObjectId('6007fbbf54fe221831e89e8a')}})
+db.resource.deleteMany({factoryInfo:{$ne:ObjectId('5fa52da09c0b977f72488d8c')},factoryInfo:{$ne:ObjectId('6008031f1f1a902031a81813')},factoryInfo:{$ne:ObjectId('5fa3d0a09c0b977f72488d4b')},factoryInfo:{$ne:ObjectId('5fa515eb9c0b977f72488d7f')},factoryInfo:{$ne:ObjectId('6007fbbf54fe221831e89e8a')}})
+db.stock.deleteMany({factoryInfo:{$ne:ObjectId('5fa52da09c0b977f72488d8c')},factoryInfo:{$ne:ObjectId('6008031f1f1a902031a81813')},factoryInfo:{$ne:ObjectId('5fa3d0a09c0b977f72488d4b')},factoryInfo:{$ne:ObjectId('5fa515eb9c0b977f72488d7f')},factoryInfo:{$ne:ObjectId('6007fbbf54fe221831e89e8a')}})
+db.task.deleteMany({factoryInfo:{$ne:ObjectId('5fa52da09c0b977f72488d8c')},factoryInfo:{$ne:ObjectId('6008031f1f1a902031a81813')},factoryInfo:{$ne:ObjectId('5fa3d0a09c0b977f72488d4b')},factoryInfo:{$ne:ObjectId('5fa515eb9c0b977f72488d7f')},factoryInfo:{$ne:ObjectId('6007fbbf54fe221831e89e8a')}})
+
+urlTemplate = 'http://robigdata.rorecherche:5000/'
